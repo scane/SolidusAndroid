@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.scanba.solidusandroid.R;
 import com.scanba.solidusandroid.api.ApiClient;
 import com.scanba.solidusandroid.models.Product;
-import com.scanba.solidusandroid.models.product.Image;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -39,7 +38,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Product product = products.get(position);
-        List<Image> images = product.getMasterVariant().getImages();
+        List<Product.Image> images = product.getMasterVariant().getImages();
         if(images.size() > 0)
             Picasso.with(context).load(ApiClient.BASE_URL + images.get(0).getMiniURL()).into(holder.productImage);
         holder.productName.setText(product.getName());
@@ -50,6 +49,13 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
     @Override
     public int getItemCount() {
         return products.size();
+    }
+
+    public void addProducts(List<Product> products) {
+        int oldCount = getItemCount();
+        int newProductsCount = products.size();
+        this.products.addAll(products);
+        notifyItemRangeInserted(oldCount, newProductsCount);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="57dp"
+        android:orientation="horizontal"
+        android:background="@color/googleBlue"
+        >
+
+        <TextView
+            android:id="@+id/drawer_fragment_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="10dp"
+            android:textAllCaps="true"
+            android:textSize="18sp"
+            android:textColor="@android:color/white"
+            android:text="Home" />
+    </LinearLayout>
+
+    <ViewFlipper
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:id="@+id/view_flipper">
+        <ListView
+            android:id="@+id/list_view_categories"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="#dddddd"
+            android:dividerHeight="0.5dp"
+            android:listSelector="@android:color/transparent"
+            />
+        <ListView
+            android:id="@+id/list_view_sub_categories"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="#dddddd"
+            android:dividerHeight="0.5dp"
+            android:listSelector="@android:color/transparent"
+            />
+    </ViewFlipper>
+</LinearLayout>
