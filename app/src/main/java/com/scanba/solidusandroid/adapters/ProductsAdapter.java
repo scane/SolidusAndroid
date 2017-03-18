@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.scanba.solidusandroid.R;
 import com.scanba.solidusandroid.api.ApiClient;
+import com.scanba.solidusandroid.enums.ViewMode;
 import com.scanba.solidusandroid.models.Product;
 import com.squareup.picasso.Picasso;
 
@@ -19,9 +20,10 @@ import java.util.List;
 
 public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHolder> {
 
-    List<Product> products;
-    LayoutInflater layoutInflater;
-    Context context;
+    private List<Product> products;
+    private LayoutInflater layoutInflater;
+    private Context context;
+    private ViewMode viewMode;
 
     public ProductsAdapter(Context context) {
         this.context = context;
@@ -31,7 +33,15 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = layoutInflater.inflate(R.layout.products_list_view_item, parent, false);
+        View view;
+        ViewMode viewMode = ViewMode.values()[viewType];
+        switch (viewMode) {
+            case LIST:
+                view = layoutInflater.inflate(R.layout.products_list_view_item, parent, false);
+                break;
+            default:
+                view = layoutInflater.inflate(R.layout.products_grid_view_item, parent, false);
+        }
         return new ViewHolder(view);
     }
 
@@ -40,7 +50,9 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
         Product product = products.get(position);
         List<Product.Image> images = product.getMasterVariant().getImages();
         if(images.size() > 0)
-            Picasso.with(context).load(ApiClient.BASE_URL + images.get(0).getMiniURL()).into(holder.productImage);
+            Picasso.with(context).load(ApiClient.BASE_URL + images.get(0).getMiniURL())
+                    .placeholder(R.drawable.placeholder)
+                    .into(holder.productImage);
         holder.productName.setText(product.getName());
         holder.productStock.setText(product.getQuantityInStock() + " in stock");
         holder.productPrice.setText(product.getDisplayPrice());
@@ -49,6 +61,15 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
     @Override
     public int getItemCount() {
         return products.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return viewMode.ordinal();
+    }
+
+    public void setViewMode(ViewMode viewMode) {
+        this.viewMode = viewMode;
     }
 
     public void addProducts(List<Product> products) {
@@ -65,10 +86,10 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
         private TextView productPrice;
         public ViewHolder(View itemView) {
             super(itemView);
-            productImage = (ImageView) itemView.findViewById(R.id.products_list_view_item_img);
-            productName = (TextView) itemView.findViewById(R.id.products_list_view_item_name);
-            productStock = (TextView) itemView.findViewById(R.id.products_list_view_item_stock);
-            productPrice = (TextView) itemView.findViewById(R.id.products_list_view_item_price);
+            productImage = (ImageView) itemView.findViewById(R.id.products_item_img);
+            productName = (TextView) itemView.findViewById(R.id.products_item_name);
+            productStock = (TextView) itemView.findViewById(R.id.products_item_stock);
+            productPrice = (TextView) itemView.findViewById(R.id.products_item_price);
         }
     }
 
