@@ -1,7 +1,9 @@
 package com.scanba.solidusandroid.listeners;
 
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 
 public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnScrollListener {
     // The minimum amount of items to have below your current scroll position
@@ -16,21 +18,21 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
     // Sets the starting page index
     private int startingPageIndex = 1;
 
-    RecyclerView.LayoutManager mLayoutManager;
-
-    public EndlessRecyclerViewScrollListener(LinearLayoutManager layoutManager) {
-        this.mLayoutManager = layoutManager;
-    }
-
     // This happens many times a second during a scroll, so be wary of the code you place here.
     // We are given a few useful parameters to help us work out if we need to load some more data,
     // but first we check if we are waiting for the previous load to finish.
     @Override
     public void onScrolled(RecyclerView view, int dx, int dy) {
+        RecyclerView.LayoutManager mLayoutManager = view.getLayoutManager();
+
         int lastVisibleItemPosition = 0;
         int totalItemCount = mLayoutManager.getItemCount();
 
-        lastVisibleItemPosition = ((LinearLayoutManager) mLayoutManager).findLastVisibleItemPosition();
+        if (mLayoutManager instanceof GridLayoutManager) {
+            lastVisibleItemPosition = ((GridLayoutManager) mLayoutManager).findLastVisibleItemPosition();
+        } else if (mLayoutManager instanceof LinearLayoutManager) {
+            lastVisibleItemPosition = ((LinearLayoutManager) mLayoutManager).findLastVisibleItemPosition();
+        }
 
         // If the total item count is zero and the previous isn't, assume the
         // list is invalidated and should be reset back to initial state

@@ -111,20 +111,19 @@ public class ProductsActivity extends AppCompatActivity implements HostActivityD
         recyclerView.setAdapter(productsAdapter);
         gridItemDecorator = new GridItemDecorator(5);
         listItemDecorator = new ListItemDecorator(5);
-//        recyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
-//            @Override
-//            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-//                loadMoreProducts(page);
-//            }
-//        });
         setupListView();
+        recyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener() {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                loadMoreProducts(page);
+            }
+        });
     }
 
     private void setupListView() {
         currentViewMode = ViewMode.LIST;
         productsAdapter.setViewMode(currentViewMode);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setHasFixedSize(true);
         recyclerView.removeItemDecoration(gridItemDecorator);
         recyclerView.addItemDecoration(listItemDecorator);
         productsAdapter.notifyDataSetChanged();
