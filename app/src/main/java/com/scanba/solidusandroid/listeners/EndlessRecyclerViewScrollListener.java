@@ -3,12 +3,8 @@ package com.scanba.solidusandroid.listeners;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 
 public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnScrollListener {
-    // The minimum amount of items to have below your current scroll position
-    // before loading more.
-    private int visibleThreshold = 3;
     // The current offset index of data you have loaded
     private int currentPage = 1;
     // The total number of items in the dataset after the last load
@@ -26,10 +22,12 @@ public abstract class EndlessRecyclerViewScrollListener extends RecyclerView.OnS
         RecyclerView.LayoutManager mLayoutManager = view.getLayoutManager();
 
         int lastVisibleItemPosition = 0;
+        int visibleThreshold = 3;
         int totalItemCount = mLayoutManager.getItemCount();
 
         if (mLayoutManager instanceof GridLayoutManager) {
             lastVisibleItemPosition = ((GridLayoutManager) mLayoutManager).findLastVisibleItemPosition();
+            visibleThreshold = visibleThreshold * ((GridLayoutManager) mLayoutManager).getSpanCount();
         } else if (mLayoutManager instanceof LinearLayoutManager) {
             lastVisibleItemPosition = ((LinearLayoutManager) mLayoutManager).findLastVisibleItemPosition();
         }
