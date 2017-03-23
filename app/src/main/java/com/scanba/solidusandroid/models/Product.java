@@ -1,6 +1,7 @@
 package com.scanba.solidusandroid.models;
 
 import com.google.gson.annotations.SerializedName;
+import com.scanba.solidusandroid.models.product.ProductImage;
 
 import java.util.List;
 
@@ -13,6 +14,8 @@ public class Product {
     private String displayPrice;
     @SerializedName("total_on_hand")
     private int quantityInStock;
+    @SerializedName("description")
+    private String description;
 
     @SerializedName("master")
     private Variant masterVariant;
@@ -37,45 +40,16 @@ public class Product {
         return masterVariant;
     }
 
-    public class Variant {
-        @SerializedName("images")
-        private List<Image> images;
-
-        public List<Image> getImages() {
-            return images;
-        }
+    public String getDescription() {
+        return description;
     }
 
-    public class Image {
-        @SerializedName("id")
-        private int id;
-        @SerializedName("mini_url")
-        private String miniURL;
-        @SerializedName("small_url")
-        private String smallURL;
-        @SerializedName("product_url")
-        private String productURL;
-        @SerializedName("large_url")
-        private String largeURL;
+    public class Variant {
+        @SerializedName("images")
+        private List<ProductImage> images;
 
-        public int getId() {
-            return id;
-        }
-
-        public String getMiniURL() {
-            return miniURL;
-        }
-
-        public String getSmallURL() {
-            return smallURL;
-        }
-
-        public String getProductURL() {
-            return productURL;
-        }
-
-        public String getLargeURL() {
-            return largeURL;
+        public List<ProductImage> getImages() {
+            return images;
         }
     }
 }
