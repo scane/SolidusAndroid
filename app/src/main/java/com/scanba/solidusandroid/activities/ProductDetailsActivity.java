@@ -6,6 +6,9 @@ import android.graphics.Color;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.view.View;
@@ -13,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.scanba.solidusandroid.R;
+import com.scanba.solidusandroid.adapters.ProductOptionTypesAdapter;
 import com.scanba.solidusandroid.api.ApiClient;
 import com.scanba.solidusandroid.api.SolidusInterface;
 import com.scanba.solidusandroid.components.CustomProgressDialog;
@@ -29,6 +33,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
     private TextView mProductName, mProductPrice, mProductDescription;
     private Toolbar toolbar;
     private RelativeLayout productContainer;
+    private RecyclerView mProductOptionTypes;
 
 
     @Override
@@ -51,6 +56,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         mProductName = (TextView) findViewById(R.id.product_name);
         mProductPrice = (TextView) findViewById(R.id.product_price);
         mProductDescription = (TextView) findViewById(R.id.product_description);
+        mProductOptionTypes = (RecyclerView) findViewById(R.id.product_option_types);
     }
 
     private void fetchProduct(final int productId) {
@@ -68,6 +74,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
                 mProductPrice.setText(product.getDisplayPrice());
                 mProductDescription.setText(product.getDescription());
                 toolbar.setTitle(product.getName());
+                setupProductOptionTypes(product);
                 dialog.dismiss();
             }
 
@@ -77,6 +84,17 @@ public class ProductDetailsActivity extends AppCompatActivity {
                 handleError(productId);
             }
         });
+    }
+
+    private void setupProductOptionTypes(Product product) {
+        if(product.isHasVariants()) {
+            mProductOptionTypes.setVisibility(RecyclerView.VISIBLE);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+            mProductOptionTypes.setLayoutManager(layoutManager);
+            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this, layoutManager.getOrientation());
+            mProductOptionTypes.addItemDecoration(dividerItemDecoration);
+            mProductOptionTypes.setAdapter(new ProductOptionTypesAdapter(this, product));
+        }
     }
 
     private void handleError(final int productId) {

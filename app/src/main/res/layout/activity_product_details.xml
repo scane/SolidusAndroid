@@ -48,6 +48,12 @@
                 android:textStyle="bold"
                 android:typeface="serif" />
 
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/product_option_types"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"></android.support.v7.widget.RecyclerView>
+
             <TextView
                 android:id="@+id/product_description"
                 android:layout_width="wrap_content"

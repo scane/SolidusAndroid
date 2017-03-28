@@ -1,7 +1,8 @@
 package com.scanba.solidusandroid.models;
 
 import com.google.gson.annotations.SerializedName;
-import com.scanba.solidusandroid.models.product.ProductImage;
+import com.scanba.solidusandroid.models.product.ProductOptionType;
+import com.scanba.solidusandroid.models.product.ProductVariant;
 
 import java.util.List;
 
@@ -17,8 +18,17 @@ public class Product {
     @SerializedName("description")
     private String description;
 
+    @SerializedName("option_types")
+    private List<ProductOptionType> optionTypes;
+
     @SerializedName("master")
-    private Variant masterVariant;
+    private ProductVariant masterVariant;
+
+    @SerializedName("has_variants")
+    private boolean hasVariants;
+
+    @SerializedName("variants")
+    private List<ProductVariant> variants;
 
     public int getId() {
         return id;
@@ -36,7 +46,7 @@ public class Product {
         return quantityInStock;
     }
 
-    public Variant getMasterVariant() {
+    public ProductVariant getMasterVariant() {
         return masterVariant;
     }
 
@@ -44,12 +54,15 @@ public class Product {
         return description;
     }
 
-    public class Variant {
-        @SerializedName("images")
-        private List<ProductImage> images;
+    public List<ProductOptionType> getOptionTypes() {
+        return optionTypes;
+    }
 
-        public List<ProductImage> getImages() {
-            return images;
-        }
+    public boolean isHasVariants() {
+        return hasVariants;
+    }
+
+    public List<ProductVariant> getVariants() {
+        return variants;
     }
 }
