@@ -53,6 +53,8 @@ public class ProductDetailsActivity extends AppCompatActivity implements Product
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         initUI();
         Intent intent = getIntent();
