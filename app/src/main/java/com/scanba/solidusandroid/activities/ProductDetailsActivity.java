@@ -23,6 +23,12 @@ import com.scanba.solidusandroid.components.CustomProgressDialog;
 import com.scanba.solidusandroid.components.ProductImagesComponent;
 import com.scanba.solidusandroid.listeners.ProductOptionValueChangeListener;
 import com.scanba.solidusandroid.models.Product;
+import com.scanba.solidusandroid.models.product.ProductOptionType;
+import com.scanba.solidusandroid.models.product.ProductVariant;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.ListIterator;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,7 +42,7 @@ public class ProductDetailsActivity extends AppCompatActivity implements Product
     private RelativeLayout productContainer;
     private RecyclerView mProductOptionTypes;
     private Product product;
-    private String[] mSelectedOptionValues;
+    private HashMap<Integer, String> mSelectedOptionValues; // option_type_id: option_type_value
 
 
     @Override
@@ -91,7 +97,7 @@ public class ProductDetailsActivity extends AppCompatActivity implements Product
 
     private void setupProductOptionTypes() {
         if(product.isHasVariants()) {
-            mSelectedOptionValues = new String[product.getOptionTypes().size()];
+            mSelectedOptionValues = new HashMap<>();
             mProductOptionTypes.setVisibility(RecyclerView.VISIBLE);
             LinearLayoutManager layoutManager = new LinearLayoutManager(this);
             mProductOptionTypes.setLayoutManager(layoutManager);
@@ -112,7 +118,36 @@ public class ProductDetailsActivity extends AppCompatActivity implements Product
     }
 
     @Override
-    public void onOptionValueChange(int optionIndex, String optionValue) {
-        mSelectedOptionValues[optionIndex] = optionValue;
+    public void onOptionValueChange(int optionTypeId, String optionValue) {
+        mSelectedOptionValues.put(optionTypeId, optionValue);
+        short j;
+        if(allOptionsSelected()) { //No null values
+            for(ProductVariant productVariant : product.getVariants()) {
+                j = 0;
+                for(ProductVariant.OptionValue productOptionValue : productVariant.getOptionValues()) {
+                    if(mSelectedOptionValues.get(productOptionValue.getOptionTypeId()) != productOptionValue.getPresentation())
+                        break;
+                    j++;
+                }
+                if(j == productVariant.getOptionValues().size()) {
+                    mProductPrice.setText(productVariant.getDisplayPrice());
+                    break;
+                }
+            }
+        }
+    }
+
+    public boolean allOptionsSelected() {
+        short i = 0;
+        int optionTypesCount = product.getOptionTypes().size();
+        for(ProductOptionType optionType : product.getOptionTypes()) { //Null values check
+            if (mSelectedOptionValues.get(optionType.getId()) == null)
+                break;
+            i++;
+        }
+        if(i == optionTypesCount)
+            return true;
+        else
+            return false;
     }
 }

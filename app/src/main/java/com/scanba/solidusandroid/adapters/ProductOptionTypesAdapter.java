@@ -94,8 +94,10 @@ public class ProductOptionTypesAdapter extends RecyclerView.Adapter<ProductOptio
 
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            if(position > 0)
-                mOptionValueChangeListener.onOptionValueChange(getAdapterPosition(), parent.getItemAtPosition(position).toString());
+            if(position > 0) {
+                ProductOptionType optionType = mProductOptionTypes.get(getAdapterPosition());
+                mOptionValueChangeListener.onOptionValueChange(optionType.getId(), parent.getItemAtPosition(position).toString());
+            }
         }
 
         @Override
