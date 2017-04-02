@@ -178,7 +178,7 @@ public class ProductsActivity extends AppCompatActivity implements HostActivityD
         Call<ProductsContainer> call;
         if(taxon == null) {
             toolbar.setTitle("Products");
-            call = apiService.getProducts(1, ApiClient.API_KEY);
+            call = apiService.getProducts(1, null, ApiClient.API_KEY);
         }
         else {
             toolbar.setTitle(taxon.getPrettyName());
@@ -214,7 +214,7 @@ public class ProductsActivity extends AppCompatActivity implements HostActivityD
     private void loadMoreProducts(int page) {
         Call<ProductsContainer> call;
         if(currentTaxon == null) {
-            call = apiService.getProducts(page, ApiClient.API_KEY);
+            call = apiService.getProducts(page, null, ApiClient.API_KEY);
         }
         else {
             call = apiService.getProductsByTaxon(currentTaxon.getId(), page, ApiClient.API_KEY);

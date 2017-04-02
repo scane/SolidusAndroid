@@ -14,7 +14,10 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.j256.ormlite.dao.Dao;
 import com.scanba.solidusandroid.R;
 import com.scanba.solidusandroid.adapters.ProductOptionTypesAdapter;
 import com.scanba.solidusandroid.api.ApiClient;
@@ -22,10 +25,13 @@ import com.scanba.solidusandroid.api.SolidusInterface;
 import com.scanba.solidusandroid.components.CustomProgressDialog;
 import com.scanba.solidusandroid.components.ProductImagesComponent;
 import com.scanba.solidusandroid.listeners.ProductOptionValueChangeListener;
+import com.scanba.solidusandroid.models.CartItem;
 import com.scanba.solidusandroid.models.Product;
 import com.scanba.solidusandroid.models.product.ProductOptionType;
 import com.scanba.solidusandroid.models.product.ProductVariant;
+import com.scanba.solidusandroid.sqlite.DatabaseHelper;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ListIterator;
@@ -42,13 +48,23 @@ public class ProductDetailsActivity extends AppCompatActivity implements Product
     private RelativeLayout productContainer;
     private RecyclerView mProductOptionTypes;
     private Product product;
+    private int mSelectedVariantId;
     private HashMap<Integer, String> mSelectedOptionValues; // option_type_id: option_type_value
+    private DatabaseHelper databaseHelper;
+    private Dao<CartItem, Integer> cartItemDao;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_details);
+
+        databaseHelper = OpenHelperManager.getHelper(this, DatabaseHelper.class);
+        try {
+            cartItemDao = databaseHelper.getCartItemDao();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
@@ -80,7 +96,9 @@ public class ProductDetailsActivity extends AppCompatActivity implements Product
             public void onResponse(Call<Product> call, Response<Product> response) {
                 product = response.body();
 
-                mProductImagesComponent.init(product.getMasterVariant().getImages());
+                ProductVariant masterVariant = product.getMasterVariant();
+                mSelectedVariantId = masterVariant.getId();
+                mProductImagesComponent.init(masterVariant.getImages());
                 mProductName.setText(product.getName());
                 mProductPrice.setText(product.getDisplayPrice());
                 mProductDescription.setText(product.getDescription());
@@ -133,6 +151,7 @@ public class ProductDetailsActivity extends AppCompatActivity implements Product
                 }
                 if(j == productVariant.getOptionValues().size()) {
                     mProductPrice.setText(productVariant.getDisplayPrice());
+                    mSelectedVariantId = productVariant.getId();
                     break;
                 }
             }
@@ -140,16 +159,40 @@ public class ProductDetailsActivity extends AppCompatActivity implements Product
     }
 
     public boolean allOptionsSelected() {
-        short i = 0;
-        int optionTypesCount = product.getOptionTypes().size();
-        for(ProductOptionType optionType : product.getOptionTypes()) { //Null values check
-            if (mSelectedOptionValues.get(optionType.getId()) == null)
-                break;
-            i++;
+        if(product.isHasVariants()) {
+            short i = 0;
+            int optionTypesCount = product.getOptionTypes().size();
+            for(ProductOptionType optionType : product.getOptionTypes()) { //Null values check
+                if (mSelectedOptionValues.get(optionType.getId()) == null)
+                    break;
+                i++;
+            }
+            if(i == optionTypesCount)
+                return true;
+            else
+                return false;
         }
-        if(i == optionTypesCount)
-            return true;
         else
-            return false;
+            return true;
+    }
+
+    public void addToCart(View view) {
+        if(allOptionsSelected()) {
+            CartItem cartItem = new CartItem();
+            cartItem.productId = product.getId();
+            cartItem.variantId = mSelectedVariantId;
+            try {
+                cartItemDao.create(cartItem);
+                Toast.makeText(this, "Successfully added product to cart", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this, CartActivity.class);
+                startActivity(intent);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Failed to add product to cart. Please try again", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else
+            Toast.makeText(this, "Please select all the options", Toast.LENGTH_SHORT).show();
+
     }
 }

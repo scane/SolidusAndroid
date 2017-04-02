@@ -9,6 +9,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.scanba.solidusandroid.R;
+import com.scanba.solidusandroid.models.CartItem;
 import com.scanba.solidusandroid.models.taxonomy.Taxon;
 
 import java.sql.SQLException;
@@ -16,9 +17,10 @@ import java.sql.SQLException;
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String DATABASE_NAME = "solidusandroid.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     private Dao<Taxon, Integer> taxonDao;
+    private Dao<CartItem, Integer> cartItemDao;
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION, R.raw.ormlite_config);
@@ -29,6 +31,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         try {
 
             TableUtils.createTable(connectionSource, Taxon.class);
+            TableUtils.createTable(connectionSource, CartItem.class);
 
         } catch (SQLException e) {
             Log.e(DatabaseHelper.class.getName(), "Unable to create databases", e);
@@ -57,5 +60,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             taxonDao = getDao(Taxon.class);
         }
         return taxonDao;
+    }
+
+    public Dao<CartItem, Integer> getCartItemDao() throws SQLException {
+        if (cartItemDao == null) {
+            cartItemDao = getDao(CartItem.class);
+        }
+        return cartItemDao;
     }
 }

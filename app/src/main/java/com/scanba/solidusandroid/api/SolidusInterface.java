@@ -16,7 +16,7 @@ public interface SolidusInterface {
     Call<ProductsContainer> getProductsByTaxon(@Query("id") int id, @Query("page") int page, @Query("token") String token);
 
     @GET("products")
-    Call<ProductsContainer> getProducts(@Query("page") int page, @Query("token") String token);
+    Call<ProductsContainer> getProducts(@Query("page") int page, @Query("ids") String ids, @Query("token") String token);
 
     @GET("products/{id}")
     Call<Product> getProduct(@Path("id") int id, @Query("token") String token);
