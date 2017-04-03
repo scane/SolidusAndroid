@@ -6,6 +6,10 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "cart_items")
 public class CartItem {
 
+    public CartItem() {
+        variantInfo = "";
+    }
+
     @DatabaseField(generatedId = true)
     public int id;
 
@@ -16,6 +20,8 @@ public class CartItem {
     public int variantId;
 
     public String name;
+
+    public String variantInfo;
 
     public String displayPrice;
 }

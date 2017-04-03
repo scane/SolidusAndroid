@@ -34,6 +34,8 @@ public class CartItemsAdapter extends RecyclerView.Adapter<CartItemsAdapter.View
     public void onBindViewHolder(ViewHolder holder, int position) {
         CartItem cartItem = mCartItems.get(position);
         holder.mName.setText(cartItem.name);
+        holder.mVariantInfo.setText(cartItem.variantInfo);
+        holder.mDisplayPrice.setText(cartItem.displayPrice);
     }
 
     @Override
@@ -44,10 +46,14 @@ public class CartItemsAdapter extends RecyclerView.Adapter<CartItemsAdapter.View
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView mName;
+        private TextView mVariantInfo;
+        private TextView mDisplayPrice;
 
         public ViewHolder(View itemView) {
             super(itemView);
             mName = (TextView) itemView.findViewById(R.id.name);
+            mVariantInfo = (TextView) itemView.findViewById(R.id.variant_info);
+            mDisplayPrice = (TextView) itemView.findViewById(R.id.display_price);
         }
     }
 }
