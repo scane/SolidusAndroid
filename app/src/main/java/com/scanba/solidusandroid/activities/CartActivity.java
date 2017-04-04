@@ -36,6 +36,7 @@ public class CartActivity extends AppCompatActivity {
     private TextView mCartEmptyMessage;
     private FrameLayout mCheckout;
     private List<CartItem> mCartItems;
+    Dao<CartItem, Integer> cartItemDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +61,7 @@ public class CartActivity extends AppCompatActivity {
     private void fetchProducts() {
         DatabaseHelper databaseHelper = OpenHelperManager.getHelper(this, DatabaseHelper.class);
         try {
-            Dao<CartItem, Integer> cartItemDao = databaseHelper.getCartItemDao();
+            cartItemDao = databaseHelper.getCartItemDao();
             mCartItems = cartItemDao.queryForAll();
             if(mCartItems.size() > 0) {
                 String ids = "";
@@ -85,6 +86,9 @@ public class CartActivity extends AppCompatActivity {
                     }
                 });
             }
+            else {
+                mCartEmptyMessage.setVisibility(TextView.VISIBLE);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -93,15 +97,15 @@ public class CartActivity extends AppCompatActivity {
 
     private void setupCart(List<Product> products) {
         if(products.isEmpty())
-            mCartEmptyMessage.setVisibility(TextView.VISIBLE);
+            cartIsEmpty();
         else {
             ListIterator<CartItem> itr = mCartItems.listIterator();
             CartItem cartItem;
             int productsCount, variantsCount;
             while(itr.hasNext()) {
                 productsCount = 0;
+                cartItem = itr.next();
                 for(Product product : products) {
-                    cartItem = itr.next();
                     if(product.getId() == cartItem.productId) {
                         cartItem.name = product.getName();
                         cartItem.displayPrice = product.getDisplayPrice();
@@ -115,19 +119,35 @@ public class CartActivity extends AppCompatActivity {
                                 }
                                 variantsCount++;
                             }
-                            if(product.getVariants().size() == variantsCount)
+                            if(product.getVariants().size() == variantsCount) {
+                                cartItem.destroy(cartItemDao);
                                 itr.remove();
+                            }
                         }
                         break;
                     }
                     productsCount++;
                 }
-                if(productsCount == products.size())
+                if(productsCount == products.size()) {
+                    cartItem.destroy(cartItemDao);
                     itr.remove();
+                }
             }
-            setupCartItems();
-            mCheckout.setVisibility(FrameLayout.VISIBLE);
+            if(mCartItems.size() > 0) {
+                cartIsNotEmpty();
+                setupCartItems();
+            }
+            else
+                cartIsEmpty();
         }
+    }
+
+    private void cartIsEmpty() {
+        mCartEmptyMessage.setVisibility(TextView.VISIBLE);
+    }
+
+    private void cartIsNotEmpty() {
+        mCheckout.setVisibility(FrameLayout.VISIBLE);
     }
 
     private void setupCartItems() {
