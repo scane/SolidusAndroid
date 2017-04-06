@@ -1,16 +1,19 @@
 package com.scanba.solidusandroid.activities;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.scanba.solidusandroid.R;
+import com.scanba.solidusandroid.activities.checkout.EmailStepActivity;
 import com.scanba.solidusandroid.adapters.CartItemsAdapter;
 import com.scanba.solidusandroid.api.ApiClient;
 import com.scanba.solidusandroid.api.SolidusInterface;
@@ -156,5 +159,10 @@ public class CartActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(adapter);
         ListItemDecorator decorator = new ListItemDecorator(5);
         mRecyclerView.addItemDecoration(decorator);
+    }
+
+    public void checkout(View view) {
+        Intent intent = new Intent(this, EmailStepActivity.class);
+        startActivity(intent);
     }
 }

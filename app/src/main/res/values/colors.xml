@@ -4,4 +4,6 @@
     <color name="googleBlue">#4A90E2</color>
     <color name="googleYellow">#FF9800</color>
     <color name="textColor">#575757</color>
+    <color name="customEditTextLabelColor">#A9A9A9</color>
+    <color name="customEditTextLabelHighlightColor">#4D4D4D</color>
 </resources>

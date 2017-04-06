@@ -3,49 +3,41 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    tools:context="com.scanba.solidusandroid.activities.CartActivity">
+    android:orientation="vertical"
+    tools:context="com.scanba.solidusandroid.activities.checkout.EmailStepActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="50dp"
-        android:orientation="vertical">
+        android:layout_height="match_parent" android:orientation="vertical">
 
         <include layout="@layout/toolbar" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/cart_items"
+        <com.scanba.solidusandroid.components.CustomEditText
+            android:id="@+id/email"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+            android:layout_height="wrap_content"></com.scanba.solidusandroid.components.CustomEditText>
+
+        <View
+            android:background="@color/customEditTextLabelColor"
+            android:layout_width="match_parent"
+            android:layout_height="1dp" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/cart_empty_message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="Your cart is empty"
-        android:textSize="20sp"
-        android:visibility="gone" />
 
     <FrameLayout
         android:id="@+id/checkout"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/googleYellow"
-        android:onClick="checkout"
-        android:visibility="gone">
+        android:background="@color/googleYellow">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="CHECKOUT"
+            android:text="Continue"
             android:textColor="@android:color/white"
             android:textSize="18sp"
             android:typeface="serif" />
     </FrameLayout>
-
 </RelativeLayout>
