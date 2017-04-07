@@ -2,6 +2,7 @@ package com.scanba.solidusandroid.components;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.EditText;
@@ -14,6 +15,7 @@ public class CustomEditText extends LinearLayout {
 
     private TextView mTextView;
     private EditText mEditText;
+    private int normalColor, highlightColor;
 
     public CustomEditText(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
@@ -26,6 +28,20 @@ public class CustomEditText extends LinearLayout {
 
         mTextView = (TextView) view.findViewById(R.id.label);
         mEditText = (EditText) view.findViewById(R.id.edit_text);
+
+        normalColor = ContextCompat.getColor(context, R.color.customEditTextLabelColor);
+        highlightColor = ContextCompat.getColor(context, R.color.customEditTextLabelHighlightColor);
+
+        mEditText.setOnFocusChangeListener(new EditText.OnFocusChangeListener(){
+
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus)
+                    mTextView.setTextColor(highlightColor);
+                else
+                    mTextView.setTextColor(normalColor);
+            }
+        });
 
     }
 
