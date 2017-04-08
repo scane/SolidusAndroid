@@ -6,13 +6,14 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.Where;
 import com.j256.ormlite.table.DatabaseTable;
+import com.scanba.solidusandroid.models.Base;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 @DatabaseTable(tableName = "taxonomy_taxons")
-public class Taxon {
+public class Taxon extends Base {
     @DatabaseField(generatedId = true)
     private int dbId;
 

@@ -20,6 +20,7 @@ import com.scanba.solidusandroid.api.SolidusInterface;
 import com.scanba.solidusandroid.components.CustomProgressDialog;
 import com.scanba.solidusandroid.components.ListItemDecorator;
 import com.scanba.solidusandroid.models.CartItem;
+import com.scanba.solidusandroid.models.Order;
 import com.scanba.solidusandroid.models.Product;
 import com.scanba.solidusandroid.models.containers.ProductsContainer;
 import com.scanba.solidusandroid.models.product.ProductVariant;
@@ -33,13 +34,15 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CartActivity extends AppCompatActivity {
+public class CartActivity extends BaseActivity {
 
     private RecyclerView mRecyclerView;
     private TextView mCartEmptyMessage;
     private FrameLayout mCheckout;
     private List<CartItem> mCartItems;
-    Dao<CartItem, Integer> cartItemDao;
+    private Dao<CartItem, Integer> cartItemDao;
+    private Dao<Order, Integer> orderDao;
+    private CustomProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +55,8 @@ public class CartActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         initUI();
+        initDatabase();
+        initAPI();
         fetchProducts();
     }
 
@@ -59,10 +64,10 @@ public class CartActivity extends AppCompatActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.cart_items);
         mCheckout = (FrameLayout) findViewById(R.id.checkout);
         mCartEmptyMessage = (TextView) findViewById(R.id.cart_empty_message);
+        progressDialog = new CustomProgressDialog(this, "Loading...");
     }
 
     private void fetchProducts() {
-        DatabaseHelper databaseHelper = OpenHelperManager.getHelper(this, DatabaseHelper.class);
         try {
             cartItemDao = databaseHelper.getCartItemDao();
             mCartItems = cartItemDao.queryForAll();
@@ -71,21 +76,19 @@ public class CartActivity extends AppCompatActivity {
                 for(CartItem cartItem : mCartItems) {
                     ids += cartItem.productId + ",";
                 }
-                final CustomProgressDialog dialog = new CustomProgressDialog(this, "Loading...");
-                dialog.show();
-                SolidusInterface apiService = ApiClient.getClient().create(SolidusInterface.class);
+                progressDialog.show();
                 Call<ProductsContainer> container = apiService.getProducts(1, ids, ApiClient.API_KEY);
                 container.enqueue(new Callback<ProductsContainer>() {
                     @Override
                     public void onResponse(Call<ProductsContainer> call, Response<ProductsContainer> response) {
                         List<Product> products = response.body().getProducts();
                         setupCart(products);
-                        dialog.dismiss();
+                        progressDialog.dismiss();
                     }
 
                     @Override
                     public void onFailure(Call<ProductsContainer> call, Throwable t) {
-                        dialog.dismiss();
+                        progressDialog.dismiss();
                     }
                 });
             }
@@ -162,6 +165,39 @@ public class CartActivity extends AppCompatActivity {
     }
 
     public void checkout(View view) {
+        progressDialog.show();
+        try {
+            orderDao = databaseHelper.getOrderDao();
+            Order order = Order.first(orderDao);
+            if(order == null) {
+                Call<Order> call = apiService.createNewOrder(ApiClient.API_KEY);
+                call.enqueue(new Callback<Order>() {
+                    @Override
+                    public void onResponse(Call<Order> call, Response<Order> response) {
+                        Order order = response.body();
+                        try {
+                            orderDao.create(order);
+                            startCheckout();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Order> call, Throwable t) {
+
+                    }
+                });
+            }
+            else
+                startCheckout();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void startCheckout() {
         Intent intent = new Intent(this, EmailStepActivity.class);
         startActivity(intent);
     }

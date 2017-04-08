@@ -51,7 +51,7 @@ public class SplashActivity extends AppCompatActivity {
         call.enqueue(new Callback<TaxonomiesContainer>() {
             @Override
             public void onResponse(Call<TaxonomiesContainer> call, Response<TaxonomiesContainer> response) {
-                if(deleteTaxonomies(taxonDao)) {
+                if(Taxon.deleteAll(taxonDao)) {
                     List<Taxonomy> taxonomies = response.body().getTaxonomies();
                     for(Taxonomy taxonomy : taxonomies) {
                         Taxon root = taxonomy.getRoot();
@@ -88,16 +88,5 @@ public class SplashActivity extends AppCompatActivity {
                 });
         snackbar.setActionTextColor(Color.RED);
         snackbar.show();
-    }
-
-    public boolean deleteTaxonomies(Dao<Taxon, Integer> taxonDao) {
-        DeleteBuilder<Taxon, Integer> deleteBuilder = taxonDao.deleteBuilder();
-        try {
-            deleteBuilder.delete();
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
     }
 }

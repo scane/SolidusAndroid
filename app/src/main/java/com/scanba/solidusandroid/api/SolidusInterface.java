@@ -1,12 +1,14 @@
 package com.scanba.solidusandroid.api;
 
 
+import com.scanba.solidusandroid.models.Order;
 import com.scanba.solidusandroid.models.Product;
 import com.scanba.solidusandroid.models.containers.ProductsContainer;
 import com.scanba.solidusandroid.models.containers.TaxonomiesContainer;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -23,4 +25,7 @@ public interface SolidusInterface {
 
     @GET("taxonomies")
     Call<TaxonomiesContainer> getTaxonomies(@Query("token") String token);
+
+    @POST("orders")
+    Call<Order> createNewOrder(@Query("token") String token);
 }
