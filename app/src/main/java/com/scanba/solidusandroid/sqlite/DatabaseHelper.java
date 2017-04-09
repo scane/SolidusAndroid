@@ -9,7 +9,6 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.scanba.solidusandroid.R;
-import com.scanba.solidusandroid.models.CartItem;
 import com.scanba.solidusandroid.models.Order;
 import com.scanba.solidusandroid.models.taxonomy.Taxon;
 
@@ -21,7 +20,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     private Dao<Taxon, Integer> taxonDao;
-    private Dao<CartItem, Integer> cartItemDao;
     private Dao<Order, Integer> orderDao;
 
     public DatabaseHelper(Context context) {
@@ -33,7 +31,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         try {
 
             TableUtils.createTable(connectionSource, Taxon.class);
-            TableUtils.createTable(connectionSource, CartItem.class);
             TableUtils.createTable(connectionSource, Order.class);
 
         } catch (SQLException e) {
@@ -65,12 +62,6 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
         return taxonDao;
     }
 
-    public Dao<CartItem, Integer> getCartItemDao() throws SQLException {
-        if (cartItemDao == null) {
-            cartItemDao = getDao(CartItem.class);
-        }
-        return cartItemDao;
-    }
 
     public Dao<Order, Integer> getOrderDao() throws SQLException {
         if (orderDao == null) {

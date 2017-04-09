@@ -8,19 +8,20 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.scanba.solidusandroid.R;
-import com.scanba.solidusandroid.models.CartItem;
+import com.scanba.solidusandroid.models.order.OrderLineItem;
+import com.scanba.solidusandroid.models.product.ProductVariant;
 
 import java.util.List;
 
 public class CartItemsAdapter extends RecyclerView.Adapter<CartItemsAdapter.ViewHolder> {
 
     private Context mContext;
-    private List<CartItem> mCartItems;
+    private List<OrderLineItem> mOrderLineItems;
     private LayoutInflater layoutInflater;
 
-    public CartItemsAdapter(Context context, List<CartItem> cartItems) {
+    public CartItemsAdapter(Context context, List<OrderLineItem> orderLineItems) {
         mContext = context;
-        mCartItems = cartItems;
+        mOrderLineItems = orderLineItems;
     }
 
     @Override
@@ -32,15 +33,16 @@ public class CartItemsAdapter extends RecyclerView.Adapter<CartItemsAdapter.View
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        CartItem cartItem = mCartItems.get(position);
-        holder.mName.setText(cartItem.name);
-        holder.mVariantInfo.setText(cartItem.variantInfo);
-        holder.mDisplayPrice.setText(cartItem.displayPrice);
+        OrderLineItem item = mOrderLineItems.get(position);
+        ProductVariant variant = item.getVariant();
+        holder.mName.setText(variant.getName());
+        holder.mVariantInfo.setText(variant.getOptionsText());
+        holder.mDisplayPrice.setText(variant.getDisplayPrice());
     }
 
     @Override
     public int getItemCount() {
-        return mCartItems.size();
+        return mOrderLineItems.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

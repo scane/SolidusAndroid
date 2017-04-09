@@ -37,6 +37,7 @@ public class EmailStepActivity extends BaseActivity {
         try {
             mOrderDao = databaseHelper.getOrderDao();
             mOrder = Order.first(mOrderDao);
+            mEmail.setEditText(mOrder.getEmail());
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -48,4 +48,8 @@ public class CustomEditText extends LinearLayout {
     public void init(String label) {
         mTextView.setText(label);
     }
+
+    public void setEditText(String value) {
+        mEditText.setText(value);
+    }
 }

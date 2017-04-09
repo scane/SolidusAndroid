@@ -1,12 +1,13 @@
 package com.scanba.solidusandroid.api;
 
-
 import com.scanba.solidusandroid.models.Order;
 import com.scanba.solidusandroid.models.Product;
 import com.scanba.solidusandroid.models.containers.ProductsContainer;
 import com.scanba.solidusandroid.models.containers.TaxonomiesContainer;
+import com.scanba.solidusandroid.models.order.OrderLineItem;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -28,4 +29,13 @@ public interface SolidusInterface {
 
     @POST("orders")
     Call<Order> createNewOrder(@Query("token") String token);
+
+    @GET("orders/{number}")
+    Call<Order> getOrder(@Path("number") String number, @Query("token") String token);
+
+    @POST("orders/{number}/line_items")
+    Call<OrderLineItem> addItemToOrder(@Path("number") String number,
+                                       @Query("line_item[variant_id]") int variantId,
+                                       @Query("line_item[quantity]") int quantity,
+                                       @Query("token") String token);
 }

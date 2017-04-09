@@ -8,6 +8,9 @@ public class ProductVariant {
     @SerializedName("id")
     private int id;
 
+    @SerializedName("name")
+    private String name;
+
     @SerializedName("display_price")
     private String displayPrice;
 
@@ -17,8 +20,15 @@ public class ProductVariant {
     @SerializedName("option_values")
     private List<OptionValue> optionValues;
 
+    @SerializedName("options_text")
+    private String optionsText;
+
     public int getId() {
         return id;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getDisplayPrice() {
@@ -33,14 +43,18 @@ public class ProductVariant {
         return optionValues;
     }
 
-    @Override
-    public String toString() {
-        StringBuilder variantInfo = new StringBuilder("");
-        for(ProductVariant.OptionValue optionValue : getOptionValues())
-            variantInfo.append(optionValue.getOptionTypePresentation() + ": " + optionValue.getPresentation() + ", ");
-        variantInfo.delete(variantInfo.length() - 2, variantInfo.length() - 1);
-        return variantInfo.toString();
+    public String getOptionsText() {
+        return optionsText;
     }
+
+//    @Override
+//    public String toString() {
+//        StringBuilder variantInfo = new StringBuilder("");
+//        for(ProductVariant.OptionValue optionValue : getOptionValues())
+//            variantInfo.append(optionValue.getOptionTypePresentation() + ": " + optionValue.getPresentation() + ", ");
+//        variantInfo.delete(variantInfo.length() - 2, variantInfo.length() - 1);
+//        return variantInfo.toString();
+//    }
 
     public class OptionValue {
         @SerializedName("id")

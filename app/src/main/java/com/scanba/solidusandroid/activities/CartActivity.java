@@ -1,7 +1,6 @@
 package com.scanba.solidusandroid.activities;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,25 +9,16 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
 import com.scanba.solidusandroid.R;
 import com.scanba.solidusandroid.activities.checkout.EmailStepActivity;
 import com.scanba.solidusandroid.adapters.CartItemsAdapter;
 import com.scanba.solidusandroid.api.ApiClient;
-import com.scanba.solidusandroid.api.SolidusInterface;
 import com.scanba.solidusandroid.components.CustomProgressDialog;
 import com.scanba.solidusandroid.components.ListItemDecorator;
-import com.scanba.solidusandroid.models.CartItem;
 import com.scanba.solidusandroid.models.Order;
-import com.scanba.solidusandroid.models.Product;
-import com.scanba.solidusandroid.models.containers.ProductsContainer;
-import com.scanba.solidusandroid.models.product.ProductVariant;
-import com.scanba.solidusandroid.sqlite.DatabaseHelper;
 
 import java.sql.SQLException;
-import java.util.List;
-import java.util.ListIterator;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -39,8 +29,6 @@ public class CartActivity extends BaseActivity {
     private RecyclerView mRecyclerView;
     private TextView mCartEmptyMessage;
     private FrameLayout mCheckout;
-    private List<CartItem> mCartItems;
-    private Dao<CartItem, Integer> cartItemDao;
     private Dao<Order, Integer> orderDao;
     private CustomProgressDialog progressDialog;
 
@@ -57,7 +45,7 @@ public class CartActivity extends BaseActivity {
         initUI();
         initDatabase();
         initAPI();
-        fetchProducts();
+        fetchOrder();
     }
 
     private void initUI() {
@@ -67,27 +55,23 @@ public class CartActivity extends BaseActivity {
         progressDialog = new CustomProgressDialog(this, "Loading...");
     }
 
-    private void fetchProducts() {
+    private void fetchOrder() {
         try {
-            cartItemDao = databaseHelper.getCartItemDao();
-            mCartItems = cartItemDao.queryForAll();
-            if(mCartItems.size() > 0) {
-                String ids = "";
-                for(CartItem cartItem : mCartItems) {
-                    ids += cartItem.productId + ",";
-                }
+            orderDao = databaseHelper.getOrderDao();
+            Order order = Order.first(orderDao);
+            if(order != null) {
                 progressDialog.show();
-                Call<ProductsContainer> container = apiService.getProducts(1, ids, ApiClient.API_KEY);
-                container.enqueue(new Callback<ProductsContainer>() {
+                Call<Order> container = apiService.getOrder(order.getNumber(), ApiClient.API_KEY);
+                container.enqueue(new Callback<Order>() {
                     @Override
-                    public void onResponse(Call<ProductsContainer> call, Response<ProductsContainer> response) {
-                        List<Product> products = response.body().getProducts();
-                        setupCart(products);
+                    public void onResponse(Call<Order> call, Response<Order> response) {
+                        Order order = response.body();
+                        setupCart(order);
                         progressDialog.dismiss();
                     }
 
                     @Override
-                    public void onFailure(Call<ProductsContainer> call, Throwable t) {
+                    public void onFailure(Call<Order> call, Throwable t) {
                         progressDialog.dismiss();
                     }
                 });
@@ -101,50 +85,12 @@ public class CartActivity extends BaseActivity {
 
     }
 
-    private void setupCart(List<Product> products) {
-        if(products.isEmpty())
+    private void setupCart(Order order) {
+        if(order.getLineItems().size() == 0)
             cartIsEmpty();
         else {
-            ListIterator<CartItem> itr = mCartItems.listIterator();
-            CartItem cartItem;
-            int productsCount, variantsCount;
-            while(itr.hasNext()) {
-                productsCount = 0;
-                cartItem = itr.next();
-                for(Product product : products) {
-                    if(product.getId() == cartItem.productId) {
-                        cartItem.name = product.getName();
-                        cartItem.displayPrice = product.getDisplayPrice();
-                        if(product.isHasVariants()) {
-                            variantsCount = 0;
-                            for(ProductVariant variant : product.getVariants()) {
-                                if(variant.getId() == cartItem.variantId) {
-                                    cartItem.displayPrice = variant.getDisplayPrice();
-                                    cartItem.variantInfo = variant.toString();
-                                    break;
-                                }
-                                variantsCount++;
-                            }
-                            if(product.getVariants().size() == variantsCount) {
-                                cartItem.destroy(cartItemDao);
-                                itr.remove();
-                            }
-                        }
-                        break;
-                    }
-                    productsCount++;
-                }
-                if(productsCount == products.size()) {
-                    cartItem.destroy(cartItemDao);
-                    itr.remove();
-                }
-            }
-            if(mCartItems.size() > 0) {
-                cartIsNotEmpty();
-                setupCartItems();
-            }
-            else
-                cartIsEmpty();
+            cartIsNotEmpty();
+            setupCartItems(order);
         }
     }
 
@@ -156,48 +102,15 @@ public class CartActivity extends BaseActivity {
         mCheckout.setVisibility(FrameLayout.VISIBLE);
     }
 
-    private void setupCartItems() {
+    private void setupCartItems(Order order) {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        CartItemsAdapter adapter = new CartItemsAdapter(this, mCartItems);
+        CartItemsAdapter adapter = new CartItemsAdapter(this, order.getLineItems());
         mRecyclerView.setAdapter(adapter);
         ListItemDecorator decorator = new ListItemDecorator(5);
         mRecyclerView.addItemDecoration(decorator);
     }
 
     public void checkout(View view) {
-        progressDialog.show();
-        try {
-            orderDao = databaseHelper.getOrderDao();
-            Order order = Order.first(orderDao);
-            if(order == null) {
-                Call<Order> call = apiService.createNewOrder(ApiClient.API_KEY);
-                call.enqueue(new Callback<Order>() {
-                    @Override
-                    public void onResponse(Call<Order> call, Response<Order> response) {
-                        Order order = response.body();
-                        try {
-                            orderDao.create(order);
-                            startCheckout();
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<Order> call, Throwable t) {
-
-                    }
-                });
-            }
-            else
-                startCheckout();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void startCheckout() {
         Intent intent = new Intent(this, EmailStepActivity.class);
         startActivity(intent);
     }
