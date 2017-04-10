@@ -21,13 +21,12 @@
         </activity>
         <activity
             android:name=".activities.CartActivity"
-            android:label="Cart">
-        </activity>
+            android:label="Cart"></activity>
         <activity
             android:name=".activities.checkout.EmailStepActivity"
-            android:label="Email">
-        </activity>
-        <activity android:name=".activities.BaseActivity"></activity>
+            android:label="Email"></activity>
+        <activity android:name=".activities.BaseActivity" />
+        <activity android:name=".activities.checkout.AddressStepActivity"></activity>
     </application>
 
 </manifest>

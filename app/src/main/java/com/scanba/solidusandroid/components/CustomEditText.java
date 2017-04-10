@@ -52,4 +52,8 @@ public class CustomEditText extends LinearLayout {
     public void setEditText(String value) {
         mEditText.setText(value);
     }
+
+    public String getEditText() {
+        return mEditText.getText().toString();
+    }
 }

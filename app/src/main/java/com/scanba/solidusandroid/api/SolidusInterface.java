@@ -10,6 +10,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -38,4 +39,12 @@ public interface SolidusInterface {
                                        @Query("line_item[variant_id]") int variantId,
                                        @Query("line_item[quantity]") int quantity,
                                        @Query("token") String token);
+
+    @PUT("orders/{number}")
+    Call<Order> updateOrderEmail(@Path("number") String number,
+                                 @Query("order[email]") String email,
+                                 @Query("token") String token);
+
+    @PUT("checkouts/{number}/next")
+    Call<Order> advanceOrderToNextStep(@Path("number") String number, @Query("token") String token);
 }

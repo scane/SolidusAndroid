@@ -12,7 +12,7 @@ import java.util.List;
 
 @DatabaseTable(tableName = "orders")
 public class Order extends Base {
-    @DatabaseField
+    @DatabaseField(id = true)
     @SerializedName("id")
     private int id;
 
@@ -22,7 +22,7 @@ public class Order extends Base {
 
     @DatabaseField
     @SerializedName("email")
-    private String email;
+    public String email;
 
     @DatabaseField
     @SerializedName("token")
@@ -37,10 +37,6 @@ public class Order extends Base {
 
     public String getNumber() {
         return number;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
     public String getToken() {
