@@ -10,7 +10,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.SplashActivity" />
+        <activity android:name=".activities.SplashActivity"></activity>
         <activity android:name=".activities.ProductsActivity" />
         <activity android:name=".activities.ProductDetailsActivity">
             <intent-filter>
@@ -26,7 +26,7 @@
             android:name=".activities.checkout.EmailStepActivity"
             android:label="Email"></activity>
         <activity android:name=".activities.BaseActivity" />
-        <activity android:name=".activities.checkout.AddressStepActivity"></activity>
+        <activity android:name=".activities.checkout.AddressStepActivity" android:label="Address"></activity>
     </application>
 
 </manifest>

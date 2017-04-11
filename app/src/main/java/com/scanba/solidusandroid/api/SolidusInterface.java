@@ -3,7 +3,9 @@ package com.scanba.solidusandroid.api;
 import com.scanba.solidusandroid.models.Order;
 import com.scanba.solidusandroid.models.Product;
 import com.scanba.solidusandroid.models.containers.ProductsContainer;
+import com.scanba.solidusandroid.models.containers.StatesContainer;
 import com.scanba.solidusandroid.models.containers.TaxonomiesContainer;
+import com.scanba.solidusandroid.models.locale.State;
 import com.scanba.solidusandroid.models.order.OrderLineItem;
 
 import retrofit2.Call;
@@ -15,6 +17,9 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface SolidusInterface {
+
+    @GET("states")
+    Call<StatesContainer> getStates(@Query("country_id") int country_id, @Query("token") String token);
 
     @GET("taxons/products")
     Call<ProductsContainer> getProductsByTaxon(@Query("id") int id, @Query("page") int page, @Query("token") String token);

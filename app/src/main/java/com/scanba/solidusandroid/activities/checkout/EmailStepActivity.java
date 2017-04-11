@@ -11,6 +11,7 @@ import com.scanba.solidusandroid.R;
 import com.scanba.solidusandroid.activities.BaseActivity;
 import com.scanba.solidusandroid.api.ApiClient;
 import com.scanba.solidusandroid.components.CustomEditText;
+import com.scanba.solidusandroid.components.CustomProgressDialog;
 import com.scanba.solidusandroid.models.Order;
 
 import java.sql.SQLException;
@@ -24,6 +25,7 @@ public class EmailStepActivity extends BaseActivity {
     CustomEditText mEmail;
     Dao<Order, Integer> mOrderDao;
     Order mOrder;
+    CustomProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +57,8 @@ public class EmailStepActivity extends BaseActivity {
         mOrder.email = email;
         try {
             mOrderDao.update(mOrder);
+            progressDialog = new CustomProgressDialog(this, "Please wait...");
+            progressDialog.show();
             Call<Order> call = apiService.updateOrderEmail(mOrder.getNumber(), mOrder.email, ApiClient.API_KEY);
             call.enqueue(new Callback<Order>() {
                 @Override
@@ -64,7 +68,7 @@ public class EmailStepActivity extends BaseActivity {
 
                 @Override
                 public void onFailure(Call<Order> call, Throwable t) {
-
+                    progressDialog.dismiss();
                 }
             });
         } catch (SQLException e) {
@@ -79,11 +83,12 @@ public class EmailStepActivity extends BaseActivity {
             public void onResponse(Call<Order> call, Response<Order> response) {
                 Intent intent = new Intent(EmailStepActivity.this, AddressStepActivity.class);
                 startActivity(intent);
+                progressDialog.dismiss();
             }
 
             @Override
             public void onFailure(Call<Order> call, Throwable t) {
-
+                progressDialog.dismiss();
             }
         });
     }

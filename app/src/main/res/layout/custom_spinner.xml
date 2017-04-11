@@ -18,13 +18,12 @@
             android:textColor="@color/customEditTextLabelColor"
             android:typeface="serif" />
 
-        <EditText
-            android:id="@+id/edit_text"
+        <Spinner
+            android:id="@+id/spinner"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="5"
-            android:background="@drawable/custom_edit_text_tint"
-            android:textCursorDrawable="@drawable/custom_edit_text_cursor" />
+            android:spinnerMode="dialog" />
     </LinearLayout>
 
     <View

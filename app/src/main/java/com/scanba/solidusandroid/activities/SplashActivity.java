@@ -15,7 +15,9 @@ import com.scanba.solidusandroid.R;
 import com.scanba.solidusandroid.api.ApiClient;
 import com.scanba.solidusandroid.api.SolidusInterface;
 import com.scanba.solidusandroid.models.Taxonomy;
+import com.scanba.solidusandroid.models.containers.StatesContainer;
 import com.scanba.solidusandroid.models.containers.TaxonomiesContainer;
+import com.scanba.solidusandroid.models.locale.State;
 import com.scanba.solidusandroid.models.taxonomy.Taxon;
 import com.scanba.solidusandroid.sqlite.DatabaseHelper;
 
@@ -26,19 +28,21 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends BaseActivity {
 
-    DatabaseHelper databaseHelper;
     Dao<Taxon, Integer> taxonDao;
+    Dao<State, Integer> stateDao;
     CoordinatorLayout container;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        databaseHelper = OpenHelperManager.getHelper(this, DatabaseHelper.class);
+        initAPI();
+        initDatabase();
         try {
             taxonDao = databaseHelper.getTaxonDao();
+            stateDao = databaseHelper.getStateDao();
             container = (CoordinatorLayout) findViewById(R.id.activity_splash_container);
             getTaxonomies();
         } catch (SQLException e) {
@@ -47,7 +51,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void getTaxonomies() {
-        Call<TaxonomiesContainer> call = ApiClient.getClient().create(SolidusInterface.class).getTaxonomies(ApiClient.API_KEY);
+        Call<TaxonomiesContainer> call = apiService.getTaxonomies(ApiClient.API_KEY);
         call.enqueue(new Callback<TaxonomiesContainer>() {
             @Override
             public void onResponse(Call<TaxonomiesContainer> call, Response<TaxonomiesContainer> response) {
@@ -59,12 +63,11 @@ public class SplashActivity extends AppCompatActivity {
                             taxonDao.create(root);
                             List<Taxon> taxons = root.getTaxons();
                             taxonDao.create(taxons);
-                            Intent intent = new Intent(SplashActivity.this, ProductsActivity.class);
-                            startActivity(intent);
                         } catch (SQLException e) {
                             e.printStackTrace();
                         }
                     }
+                    getStates();
                 }
                 else
                     handleError();
@@ -78,6 +81,36 @@ public class SplashActivity extends AppCompatActivity {
 
     }
 
+    private void getStates() {
+        try {
+            if(stateDao.countOf() == 0) {
+                Call<StatesContainer> call = apiService.getStates(ApiClient.COUNTRY_ID, ApiClient.API_KEY);
+                call.enqueue(new Callback<StatesContainer>() {
+                    @Override
+                    public void onResponse(Call<StatesContainer> call, Response<StatesContainer> response) {
+                        List<State> states = response.body().getStates();
+                        try {
+                            stateDao.create(states);
+                            goToHome();
+                        } catch (SQLException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<StatesContainer> call, Throwable t) {
+
+                    }
+                });
+            }
+            else
+                goToHome();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void handleError() {
         Snackbar snackbar = Snackbar.make(container, "The app failed to open.", Snackbar.LENGTH_INDEFINITE)
                 .setAction("Retry", new View.OnClickListener() {
@@ -88,5 +121,10 @@ public class SplashActivity extends AppCompatActivity {
                 });
         snackbar.setActionTextColor(Color.RED);
         snackbar.show();
+    }
+
+    private void goToHome() {
+        Intent intent = new Intent(this, ProductsActivity.class);
+        startActivity(intent);
     }
 }

@@ -81,7 +81,7 @@ public class DrawerFragment extends Fragment implements DrawerItemClickListener 
 
     @Override
     public void onTaxonClicked(Taxon taxon) {
-        if(taxon.getDbId() == 0) //back button clicked
+        if(taxon.getId() == 0) //back button clicked
             viewFlipper.setDisplayedChild(0);
         else if(taxon.getParentId() == null && taxon.hasChildren(taxonDao)) { //parent category clicked
             List<Taxon> categories = Taxon.getTaxonsByParentID(taxon.getId(), taxonDao);

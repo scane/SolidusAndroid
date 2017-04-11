@@ -14,10 +14,7 @@ import java.util.List;
 
 @DatabaseTable(tableName = "taxonomy_taxons")
 public class Taxon extends Base {
-    @DatabaseField(generatedId = true)
-    private int dbId;
-
-    @DatabaseField
+    @DatabaseField(id = true)
     @SerializedName("id")
     private int id;
 
@@ -37,10 +34,6 @@ public class Taxon extends Base {
     private List<Taxon> taxons;
 
     public Taxon() {}
-
-    public int getDbId() {
-        return dbId;
-    }
 
     public int getId() {
         return id;
