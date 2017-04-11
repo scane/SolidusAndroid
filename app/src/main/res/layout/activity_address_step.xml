@@ -1,13 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.scanba.solidusandroid.activities.checkout.AddressStepActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" android:text="Address" />
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-</LinearLayout>
+        <include layout="@layout/toolbar" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:text="Shipping Address"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:typeface="serif" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@android:color/black" />
+
+                <com.scanba.solidusandroid.components.CustomEditText
+                    android:id="@+id/first_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:label="First Name"></com.scanba.solidusandroid.components.CustomEditText>
+
+
+                <com.scanba.solidusandroid.components.CustomEditText
+                    android:id="@+id/last_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:label="Last Name"></com.scanba.solidusandroid.components.CustomEditText>
+
+
+                <com.scanba.solidusandroid.components.CustomEditText
+                    android:id="@+id/address1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:label="Address"></com.scanba.solidusandroid.components.CustomEditText>
+
+
+                <com.scanba.solidusandroid.components.CustomEditText
+                    android:id="@+id/city"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:label="City"></com.scanba.solidusandroid.components.CustomEditText>
+
+
+                <com.scanba.solidusandroid.components.CustomEditText
+                    android:id="@+id/phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:label="Phone"></com.scanba.solidusandroid.components.CustomEditText>
+
+
+                <com.scanba.solidusandroid.components.CustomEditText
+                    android:id="@+id/zipcode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:label="Zipcode"></com.scanba.solidusandroid.components.CustomEditText>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Billing Address"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:typeface="serif" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@android:color/black" />
+
+                <CheckedTextView
+                    android:id="@+id/checkedTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:drawableLeft="?android:attr/listChoiceIndicatorSingle"
+                    android:gravity="center_vertical"
+                    android:padding="10dp"
+                    android:text="Same as shipping"
+                    android:textColor="@color/customEditTextLabelHighlightColor" />
+            </LinearLayout>
+
+        </ScrollView>
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/googleYellow">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Continue"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:typeface="serif" />
+    </FrameLayout>
+</RelativeLayout>

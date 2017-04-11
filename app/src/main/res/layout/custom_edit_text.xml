@@ -2,21 +2,33 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
-    android:padding="10dp">
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/label"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="5"
-        android:typeface="serif" />
+        android:orientation="horizontal"
+        android:padding="10dp">
 
-    <EditText
-        android:id="@+id/edit_text"
+        <TextView
+            android:id="@+id/label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:textColor="@color/customEditTextLabelColor"
+            android:typeface="serif" />
+
+        <EditText
+            android:id="@+id/edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:background="@drawable/custom_edit_text_tint"
+            android:textCursorDrawable="@drawable/custom_edit_text_cursor" />
+    </LinearLayout>
+
+    <View
         android:layout_width="match_parent"
-        android:background="@drawable/custom_edit_text_tint"
-        android:layout_weight="3"
-        android:textCursorDrawable="@drawable/custom_edit_text_cursor"
-        android:layout_height="wrap_content" />
+        android:layout_height="1dp"
+        android:background="@color/customEditTextLabelColor" />
 </LinearLayout>

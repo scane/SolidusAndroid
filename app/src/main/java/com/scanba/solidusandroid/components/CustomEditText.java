@@ -30,7 +30,7 @@ public class CustomEditText extends LinearLayout {
         mTextView = (TextView) view.findViewById(R.id.label);
         mEditText = (EditText) view.findViewById(R.id.edit_text);
 
-        TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.CustomEditText, defStyleAttr, 0);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CustomEditText, defStyleAttr, 0);
         mTextView.setText(a.getString(R.styleable.CustomEditText_label));
         a.recycle();
 
@@ -48,10 +48,6 @@ public class CustomEditText extends LinearLayout {
             }
         });
 
-    }
-
-    public void init(String label) {
-        mTextView.setText(label);
     }
 
     public void setEditText(String value) {
