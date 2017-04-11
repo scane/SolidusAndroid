@@ -1,6 +1,7 @@
 package com.scanba.solidusandroid.components;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
@@ -28,6 +29,10 @@ public class CustomEditText extends LinearLayout {
 
         mTextView = (TextView) view.findViewById(R.id.label);
         mEditText = (EditText) view.findViewById(R.id.edit_text);
+
+        TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.CustomEditText, defStyleAttr, 0);
+        mTextView.setText(a.getString(R.styleable.CustomEditText_label));
+        a.recycle();
 
         normalColor = ContextCompat.getColor(context, R.color.customEditTextLabelColor);
         highlightColor = ContextCompat.getColor(context, R.color.customEditTextLabelHighlightColor);

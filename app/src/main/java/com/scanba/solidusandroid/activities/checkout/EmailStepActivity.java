@@ -38,7 +38,6 @@ public class EmailStepActivity extends BaseActivity {
 
     private void initUI() {
         mEmail = (CustomEditText) findViewById(R.id.email);
-        mEmail.init("Email ID");
     }
 
     private void initOrder() {
