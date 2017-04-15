@@ -31,6 +31,12 @@ public class Order extends Base {
     @SerializedName("line_items")
     private List<OrderLineItem> lineItems;
 
+    @SerializedName("ship_address")
+    private Address shipAddress;
+
+    @SerializedName("bill_address")
+    private Address billAddress;
+
     public int getId() {
         return id;
     }
@@ -45,5 +51,13 @@ public class Order extends Base {
 
     public List<OrderLineItem> getLineItems() {
         return lineItems;
+    }
+
+    public Address getShipAddress() {
+        return shipAddress;
+    }
+
+    public Address getBillAddress() {
+        return billAddress;
     }
 }

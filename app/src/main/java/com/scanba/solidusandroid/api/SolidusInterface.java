@@ -1,5 +1,7 @@
 package com.scanba.solidusandroid.api;
 
+import com.scanba.solidusandroid.api.requests.UpdateCheckoutAddressRequest;
+import com.scanba.solidusandroid.models.Address;
 import com.scanba.solidusandroid.models.Order;
 import com.scanba.solidusandroid.models.Product;
 import com.scanba.solidusandroid.models.containers.ProductsContainer;
@@ -52,4 +54,7 @@ public interface SolidusInterface {
 
     @PUT("checkouts/{number}/next")
     Call<Order> advanceOrderToNextStep(@Path("number") String number, @Query("token") String token);
+
+    @PUT("checkouts/{number}")
+    Call<Order> updateCheckoutAddress(@Path("number") String number, @Body UpdateCheckoutAddressRequest request, @Query("token") String token);
 }

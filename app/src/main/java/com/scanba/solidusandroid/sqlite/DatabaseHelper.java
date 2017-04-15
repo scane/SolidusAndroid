@@ -9,6 +9,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.scanba.solidusandroid.R;
+import com.scanba.solidusandroid.models.Address;
 import com.scanba.solidusandroid.models.Order;
 import com.scanba.solidusandroid.models.locale.State;
 import com.scanba.solidusandroid.models.taxonomy.Taxon;
@@ -23,6 +24,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private Dao<Taxon, Integer> taxonDao;
     private Dao<Order, Integer> orderDao;
     private Dao<State, Integer> stateDao;
+    private Dao<Address, Integer> addressDao;
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION, R.raw.ormlite_config);
@@ -35,7 +37,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, Taxon.class);
             TableUtils.createTable(connectionSource, Order.class);
             TableUtils.createTable(connectionSource, State.class);
-
+            TableUtils.createTable(connectionSource, Address.class);
         } catch (SQLException e) {
             Log.e(DatabaseHelper.class.getName(), "Unable to create databases", e);
         }
@@ -78,5 +80,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             stateDao = getDao(State.class);
         }
         return stateDao;
+    }
+
+    public Dao<Address, Integer> getAddressDao() throws SQLException {
+        if (addressDao == null) {
+            addressDao = getDao(Address.class);
+        }
+        return addressDao;
     }
 }

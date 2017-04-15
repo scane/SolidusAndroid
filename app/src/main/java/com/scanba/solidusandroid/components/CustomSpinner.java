@@ -13,6 +13,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.scanba.solidusandroid.R;
+import com.scanba.solidusandroid.models.locale.State;
 
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class CustomSpinner extends LinearLayout {
         a.recycle();
     }
 
-    public void init(List<String> list) {
+    public void init(List<String> list, int selectedPosition) {
         list.add(0, "Select " + mTextView.getText());
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_spinner_item, list) {
             @Override
@@ -51,5 +52,11 @@ public class CustomSpinner extends LinearLayout {
         };
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(adapter);
+        mSpinner.setSelection(selectedPosition + 1);
+
+    }
+
+    public int getSelectedItemPosition() {
+        return mSpinner.getSelectedItemPosition() - 1;
     }
 }

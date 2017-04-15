@@ -22,6 +22,7 @@ import com.scanba.solidusandroid.api.ApiClient;
 import com.scanba.solidusandroid.components.CustomProgressDialog;
 import com.scanba.solidusandroid.components.ProductImagesComponent;
 import com.scanba.solidusandroid.listeners.ProductOptionValueChangeListener;
+import com.scanba.solidusandroid.models.Address;
 import com.scanba.solidusandroid.models.Order;
 import com.scanba.solidusandroid.models.Product;
 import com.scanba.solidusandroid.models.order.OrderLineItem;
@@ -37,13 +38,13 @@ import retrofit2.Response;
 
 public class ProductDetailsActivity extends BaseActivity implements ProductOptionValueChangeListener {
 
-    private ProductImagesComponent mProductImagesComponent;
-    private TextView mProductName, mProductPrice, mProductDescription;
+    private ProductImagesComponent productImagesComponent;
+    private TextView productName, productPrice, productDescription;
     private RelativeLayout productContainer;
-    private RecyclerView mProductOptionTypes;
+    private RecyclerView productOptionTypes;
     private Product product;
-    private int mSelectedVariantId;
-    private HashMap<Integer, String> mSelectedOptionValues; // option_type_id: option_type_value
+    private int selectedVariantId;
+    private HashMap<Integer, String> selectedOptionValues; // option_type_id: option_type_value
     private Dao<Order, Integer> orderDao;
     private CustomProgressDialog progressDialog;
 
@@ -90,11 +91,11 @@ public class ProductDetailsActivity extends BaseActivity implements ProductOptio
 
     private void initUI() {
         productContainer = (RelativeLayout) findViewById(R.id.product_container);
-        mProductImagesComponent = (ProductImagesComponent) findViewById(R.id.product_images_container);
-        mProductName = (TextView) findViewById(R.id.product_name);
-        mProductPrice = (TextView) findViewById(R.id.product_price);
-        mProductDescription = (TextView) findViewById(R.id.product_description);
-        mProductOptionTypes = (RecyclerView) findViewById(R.id.product_option_types);
+        productImagesComponent = (ProductImagesComponent) findViewById(R.id.product_images_container);
+        productName = (TextView) findViewById(R.id.product_name);
+        productPrice = (TextView) findViewById(R.id.product_price);
+        productDescription = (TextView) findViewById(R.id.product_description);
+        productOptionTypes = (RecyclerView) findViewById(R.id.product_option_types);
     }
 
     private void fetchProduct(final int productId) {
@@ -107,11 +108,11 @@ public class ProductDetailsActivity extends BaseActivity implements ProductOptio
                 product = response.body();
 
                 ProductVariant masterVariant = product.getMasterVariant();
-                mSelectedVariantId = masterVariant.getId();
-                mProductImagesComponent.init(masterVariant.getImages());
-                mProductName.setText(product.getName());
-                mProductPrice.setText(product.getDisplayPrice());
-                mProductDescription.setText(product.getDescription());
+                selectedVariantId = masterVariant.getId();
+                productImagesComponent.init(masterVariant.getImages());
+                productName.setText(product.getName());
+                productPrice.setText(product.getDisplayPrice());
+                productDescription.setText(product.getDescription());
                 toolbar.setTitle(product.getName());
                 setupProductOptionTypes();
                 dialog.dismiss();
@@ -127,13 +128,13 @@ public class ProductDetailsActivity extends BaseActivity implements ProductOptio
 
     private void setupProductOptionTypes() {
         if(product.isHasVariants()) {
-            mSelectedOptionValues = new HashMap<>();
-            mProductOptionTypes.setVisibility(RecyclerView.VISIBLE);
+            selectedOptionValues = new HashMap<>();
+            productOptionTypes.setVisibility(RecyclerView.VISIBLE);
             LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-            mProductOptionTypes.setLayoutManager(layoutManager);
+            productOptionTypes.setLayoutManager(layoutManager);
             DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this, layoutManager.getOrientation());
-            mProductOptionTypes.addItemDecoration(dividerItemDecoration);
-            mProductOptionTypes.setAdapter(new ProductOptionTypesAdapter(this, product, this));
+            productOptionTypes.addItemDecoration(dividerItemDecoration);
+            productOptionTypes.setAdapter(new ProductOptionTypesAdapter(this, product, this));
         }
     }
 
@@ -149,19 +150,19 @@ public class ProductDetailsActivity extends BaseActivity implements ProductOptio
 
     @Override
     public void onOptionValueChange(int optionTypeId, String optionValue) {
-        mSelectedOptionValues.put(optionTypeId, optionValue);
+        selectedOptionValues.put(optionTypeId, optionValue);
         short j;
         if(allOptionsSelected()) { //No null values
             for(ProductVariant productVariant : product.getVariants()) {
                 j = 0;
                 for(ProductVariant.OptionValue productOptionValue : productVariant.getOptionValues()) {
-                    if(mSelectedOptionValues.get(productOptionValue.getOptionTypeId()) != productOptionValue.getPresentation())
+                    if(selectedOptionValues.get(productOptionValue.getOptionTypeId()) != productOptionValue.getPresentation())
                         break;
                     j++;
                 }
                 if(j == productVariant.getOptionValues().size()) {
-                    mProductPrice.setText(productVariant.getDisplayPrice());
-                    mSelectedVariantId = productVariant.getId();
+                    productPrice.setText(productVariant.getDisplayPrice());
+                    selectedVariantId = productVariant.getId();
                     break;
                 }
             }
@@ -173,7 +174,7 @@ public class ProductDetailsActivity extends BaseActivity implements ProductOptio
             short i = 0;
             int optionTypesCount = product.getOptionTypes().size();
             for(ProductOptionType optionType : product.getOptionTypes()) { //Null values check
-                if (mSelectedOptionValues.get(optionType.getId()) == null)
+                if (selectedOptionValues.get(optionType.getId()) == null)
                     break;
                 i++;
             }
@@ -223,7 +224,7 @@ public class ProductDetailsActivity extends BaseActivity implements ProductOptio
     }
 
     public void addItemToOrder(Order order) {
-        Call<OrderLineItem> call = apiService.addItemToOrder(order.getNumber(), mSelectedVariantId, 1, ApiClient.API_KEY);
+        Call<OrderLineItem> call = apiService.addItemToOrder(order.getNumber(), selectedVariantId, 1, ApiClient.API_KEY);
         call.enqueue(new Callback<OrderLineItem>() {
             @Override
             public void onResponse(Call<OrderLineItem> call, Response<OrderLineItem> response) {
